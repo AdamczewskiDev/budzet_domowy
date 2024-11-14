@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # budzet_domowy/settings.py
@@ -32,12 +32,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&t=1km)0v$$vq4k+^-958!1b5zcmo4s$l7nmwq5+w&-op5lqj0'
+# SECRET_KEY = 'django-insecure-&t=1km)0v$$vq4k+^-958!1b5zcmo4s$l7nmwq5+w&-op5lqj0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+# Zabezpieczenie klucza SECRET_KEY
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '0v$$vq4k+^-958!1b5zcmo4s$l7nmwq5+w&-op5lqj0')
+
+# Włącz tryb produkcyjny
+DEBUG = False
+
+# Dodaj domenę aplikacji do ALLOWED_HOSTS
+ALLOWED_HOSTS = ['twoja-aplikacja.onrender.com']  # Zastąp nazwą domeny aplikacji
+
 
 
 # Application definition
@@ -58,6 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -138,3 +149,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
