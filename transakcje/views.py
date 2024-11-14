@@ -5,17 +5,39 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import Kategoria, Transakcja
 from .serializers import KategoriaSerializer, TransakcjaSerializer
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
+from django.db.models import Sum
+from rest_framework.decorators import api_view
+
 @api_view(['GET'])
 def home(request):
     return Response({"message": "Witamy w aplikacji Budżet Domowy API. Użyj /api/ do dostępu do zasobów."})
+def statystyki(request):
+    total_expenses = Transakcja.objects.filter(
+        użytkownik=request.user,
+        kwota__lt=0  # Zakładając, że wydatki mają ujemną kwotę
+    ).aggregate(total=Sum('kwota'))['total'] or 0
+
+    total_income = Transakcja.objects.filter(
+        użytkownik=request.user,
+        kwota__gt=0  # Zakładając, że przychody mają dodatnią kwotę
+    ).aggregate(total=Sum('kwota'))['total'] or 0
+
+    return Response({
+        "wydatki": total_expenses,
+        "przychody": total_income,
+    })
 
 
 # Widok rejestracji użytkownika
@@ -41,9 +63,29 @@ def register_user(request):
 class KategoriaViewSet(viewsets.ModelViewSet):
     queryset = Kategoria.objects.all()                # Pobiera wszystkie obiekty kategorii
     serializer_class = KategoriaSerializer            # Serializator dla kategorii
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Kategoria.objects.filter(użytkownik=self.request.user)  # Filtruje kategorie zalogowanego użytkownika
+
+    def perform_create(self, serializer):
+        serializer.save(użytkownik=self.request.user)  # Ustawia zalogowanego użytkownika jako właściciela
 
 
 # Widok dla transakcji budżetu (CRUD)
 class TransakcjaViewSet(viewsets.ModelViewSet):
     queryset = Transakcja.objects.all()               # Pobiera wszystkie obiekty transakcji
     serializer_class = TransakcjaSerializer           # Serializator dla transakcji
+    permission_classes = [IsAuthenticated]
+    
+    # Konfiguracja filtrowania
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ['kategoria', 'data']   # Filtruj po kategorii i dacie
+    ordering_fields = ['kwota', 'data']        # Sortuj po kwocie i dacie
+    search_fields = ['opis']                   # Szukaj w polu "opis"
+    
+    def get_queryset(self):
+        return Transakcja.objects.filter(użytkownik=self.request.user)  # Filtruje transakcje zalogowanego użytkownika
+
+    def perform_create(self, serializer):
+        serializer.save(użytkownik=self.request.user)  # Ustawia zalogowanego użytkownika jako właściciela
