@@ -1,28 +1,24 @@
 # transakcje/views.py
 
 from django.contrib.auth.models import User
-from rest_framework import status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Sum
+
+from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import Kategoria, Transakcja
 from .serializers import KategoriaSerializer, TransakcjaSerializer
 
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 
-from django.db.models import Sum
-from rest_framework.decorators import api_view
 
 @api_view(['GET'])
 def home(request):
     return Response({"message": "Witamy w aplikacji Budżet Domowy API. Użyj /api/ do dostępu do zasobów."})
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Tylko dla zalogowanych użytkowników
 def statystyki(request):
     total_expenses = Transakcja.objects.filter(
         użytkownik=request.user,

@@ -15,13 +15,20 @@ from pathlib import Path
 # budzet_domowy/settings.py
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # Tylko zalogowani użytkownicy mają dostęp domyślnie
+        'rest_framework.permissions.AllowAny',  # Tymczasowe zezwolenie dla testów
     ),
 }
+
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',  # Tylko zalogowani użytkownicy mają dostęp domyślnie
+#     ),
+# }
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -50,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'corsheaders',
     #API
     'rest_framework',
     #Moja appka
@@ -64,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'budzet_domowy.urls'
@@ -82,6 +91,10 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Dodaj tutaj adres frontendu
 ]
 
 WSGI_APPLICATION = 'budzet_domowy.wsgi.application'
@@ -131,6 +144,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Dla Produkcji odkomentować poniszą linijkę
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'static/'
 
