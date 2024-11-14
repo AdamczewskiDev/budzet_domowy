@@ -1,0 +1,61 @@
+# Ignorowanie środowiska wirtualnego
+venv/
+env/
+
+# Ignorowanie plików cache Pythona
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignorowanie plików systemowych i edytora
+.DS_Store
+*.swp
+*.swo
+*.swn
+*.swt
+*.swm
+*.swo
+.idea/                  # PyCharm/IntelliJ
+.vscode/                # Visual Studio Code
+
+# Ignorowanie plików konfiguracyjnych systemu operacyjnego
+Thumbs.db
+desktop.ini
+
+# Ignorowanie plików logów i migracji
+*.log
+*.pot
+*.mo
+*.sql
+*.sqlite3
+db.sqlite3
+
+# Ignorowanie migracji (opcjonalnie)
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Ignorowanie plików tymczasowych oraz plików pośrednich
+*.bak
+*.tmp
+*.backup
+*.~lock.*
+*.pid
+*.seed
+*.cover
+*.log
+*.cache
+*.coverage
+.coverage.*
+.tox/
+.eggs/
+*.egg
+*.egg-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignorowanie folderów statycznych tworzonych przez Django
+/staticfiles/
+.media/
+
+# Ignorowanie plików zależności
+*.env                  # Pliki konfiguracyjne z sekretami
