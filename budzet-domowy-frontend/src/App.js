@@ -4,6 +4,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Categories from './components/Categories';
+import Dashboard from './components/Dashboard';
+import Transactions from './components/Transactions';
 
 function App() {
     return (
@@ -13,6 +15,8 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/categories" element={<Categories />} />
+                    <Route path="/dashboard" element={<Dashboard />} /> {/* Dodajemy Dashboard */}
+                    <Route path="/transactions" element={<Transactions />} />
                 </Routes>
             </div>
         </Router>
